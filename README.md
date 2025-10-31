@@ -16,7 +16,7 @@ This is the routine that 90% of the midi players do every single time they load 
 
 So, I wondered what if we do all of that work ahead of time? And that gave me the idea of creating MIDI 3.0. 
 
-MIDI 3.0 uses the exact same MThd header format as MIDI 1.0, only with the format version field set to 3. Followed by a dedicated MCdt conductor track and a single MTrk section containing ALL non-tempo midi events instead of splitting into multiple MTrk sections like Format Version 1.0. All events have 3 extra fields, unsigned long long abs_microsecond, unsigned short track_id, and size_t pair_index. pair_index is set to ~0 for all non-note events. The MTrk section should not contain any tempo or time signature events, they should be placed in the MCdt section instead. 
+MIDI 3.0 uses the exact same MThd header format as MIDI 1.0, only with the format version field set to 3. Followed by a dedicated MCdt conductor track and a single MTrk section containing ALL non-tempo midi events instead of splitting into multiple MTrk sections like Format Version 1.0. All events have 3 extra fields, unsigned long long abs_microsecond, unsigned short track_id, and unsigned long pair_index. pair_index is set to ~0 for all non-note events. The MTrk section should not contain any tempo or time signature events, they should be placed in the MCdt section instead. 
 
 MIDI 3.0 is backward compatible with MIDI 1.0, and a lossless 1.0 to 3.0 and 3.0 to 1.0 conversion is theoretically doable. However, MIDI 3.0 is NOT compatible with MIDI 2.0. 
 
