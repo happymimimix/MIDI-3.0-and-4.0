@@ -8,15 +8,15 @@ Format Version 3.0 is not made for editing; it's made for real time playback. It
 
 What made MIDI 3.0 so fast and so easy to implement? 
 
-First, all midi events in Format Version 3.0 always uses absolute timing instead of relative timing. Second, all midi events in Format Version 3.0 has an additional field that holds the absolute microsecond for this event. Third, all midi tracks are merged into one with each individual event having an extra field indicating which track it's coming from. Finally, all note on events have an extra field labeling the index of its matching note off, all note off events also have an extra field labeling the index of its matching note on. 
+First, all midi events in Format Version 3.0 always uses absolute timing instead of relative timing, and all midi events in MIDI 3.0 has an additional field that defines the absolute microsecond for this event. Second, all midi tracks are merged into one with each individual event having an extra field indicating which track it's coming from. Third, there's a dedicated conductor track that keeps all tempo and time signature events in one place. Finally, all note on events have an extra field labeling the index of its matching note off, and all note off events also have an extra field labeling the index of its matching note on. 
 
-I investigated the source code of many popular open-sourced midi players and found that the first thing that the midi player does after loading a midi file is to convert relative tick to absolute tick. Then, many of them would merge all midi tracks into a single big event pool sorted by time. Many midi players that have a visualizer like to connect note on and note off so they can render graphics efficiently. 
+I investigated the source code of many popular open-sourced midi players and found that the first thing that the midi player does after loading a midi file is to convert relative tick to absolute tick. Then, many of them would merge all midi tracks into a single big event pool sorted by time. Midi players also like to create a dedicated conductor track in memory that keeps all tempo and time signature events in one place instead of scattered everywhere across 65535 different tracks. Midi players that have a visualizer always like to connect note on and note off events so they can render graphics efficiently. 
 
 This is the routine that 90% of the midi players do every single time they load a new midi file for playback. 
 
 So, I wondered what if we do all of that work ahead of time? And that gave me the idea of creating MIDI 3.0. 
 
-MIDI 3.0 uses the exact same MThd header format as MIDI 1.0, only with the format version field set to 3. Followed by a single MTrk section containing ALL midi events instead of splitting into multiple MTrk sections like Format Version 1.0. All events have 3 extra fields, unsigned long long abs_microsecond, unsigned short track_id, and size_t pair_index. pair_index is set to ~0 for all non-note events. 
+MIDI 3.0 uses the exact same MThd header format as MIDI 1.0, only with the format version field set to 3. Followed by a dedicated MCdt conductor track and a single MTrk section containing ALL non-tempo midi events instead of splitting into multiple MTrk sections like Format Version 1.0. All events have 3 extra fields, unsigned long long abs_microsecond, unsigned short track_id, and size_t pair_index. pair_index is set to ~0 for all non-note events. The MTrk section should not contain any tempo or time signature events, they should be placed in the MCdt section instead. 
 
 MIDI 3.0 is backward compatible with MIDI 1.0, and a lossless 1.0 to 3.0 and 3.0 to 1.0 conversion is theoretically doable. However, MIDI 3.0 is NOT compatible with MIDI 2.0. 
 
@@ -26,12 +26,14 @@ MIDI 3.0 can only be played by midi players that support this format, you cannot
 
 For midi editors, I have another new midi format made specifically for this purpose: MIDI Format Version 4.0! 
 
-MIDI 4.0 shares the same header format as MIDI 1.0, only with the format version field set to 4. It still preserves the multiple separated MTrk layout like MIDI 1.0, because this track separation, although not friendly to midi players, is very useful for midi editors. The real major difference is here: 
+MIDI 4.0 also shares the same header format as MIDI 1.0, only with the format version field set to 4. It still preserves the multiple separated MTrk layout like MIDI 1.0, because this track separation, although not friendly to midi players, is very useful to midi editors. The real major difference is here: 
 
 Note events are no longer identified as separated note on and note off events. Instead, they are combined into one single note on event with a specific duration. 
 And the same as MIDI 3.0, all events use absolute tick timing, but there's no absolute microsecond field in MIDI 4.0. Microsecond is what midi players would care about, not midi editors; editors only care about tick. 
 
 There's now a new type of event in Format Version 4.0 called "continuous event". Instead of having one instantaneous event on every single tick setting the value of a CC controller or song tempo, it's now replaced by one single continuous event that defines the start time, duration, event type, channel, start value, end value, and easing function. The old instantaneous CC and tempo event are still supported in 4.0 for backward compatibility. 
+
+Format Version 4.0 also has a dedicated conductor track MCdt in front of the multiple MTrk sections, and no tempo or time signature events are supposed to appear in MTrk. Same as Format Version 3.0. 
 
 Be aware that there WILL be permanent data loss when converting 4.0 to 1.0 or 3.0! All continuous midi event will be sliced into multiple instantaneous events after conversion because MIDI 3.0 and MIDI 1.0 doesn't support continuous events. 
 
@@ -44,6 +46,8 @@ Wait, isn't Format Version 4.0 doing something that DAWs already solve using the
 Without a standardized MIDI 4.0, you're forced to lose all your beautiful automation envelopes and suffer for the extradentary long export and import time. 
 
 However, if both of the DAWs you're using happened to implement support for MIDI Format Version 4.0, then you can quickly export your project in literal MILLE SECONDS and import it into the other DAW with all your automation envelops perfectly preserved! 
+
+# Why do I believe the invention of MIDI Format Version 3.0 and 4.0 is more meaningful than Format Version 2.0? 
 
 The biggest problem I encountered when trying to incorporate MIDI 2.0 into my workflow was the fact that 99% of the software I use doesn't support 2.0 at all. 
 
