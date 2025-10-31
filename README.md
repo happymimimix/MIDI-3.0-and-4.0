@@ -1,6 +1,6 @@
 # MIDI Format Version 3.0 Specifications
 
-I invented a new midi format: MIDI Format Version 3.0! 
+I've invented a new midi format: MIDI Format Version 3.0! 
 
 Compared to the meaningless Format Version 2.0 that does something that Steinberg and Image-Line have already accomplished using MIDI 1.0 in combination with their own private protocol more than 20 years ago, Format Version 3.0 has actual use cases that no one has ever implemented a direct replacement for. 
 
