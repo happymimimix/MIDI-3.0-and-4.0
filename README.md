@@ -26,7 +26,7 @@ MIDI 3.0 can only be played by midi players that support this format, you cannot
 
 For midi editors, I have another new midi format made specifically for this purpose: MIDI Format Version 4.0! 
 
-MIDI 4.0 also shares the same header format as MIDI 1.0, only with the format version field set to 4. It still preserves the multiple separated MTrk layout like MIDI 1.0, because this track separation, although not friendly to midi players, is very useful to midi editors. The real major difference is here: 
+MIDI 4.0 also shares the same MThd header format as MIDI 1.0, only with the format version field set to 4. It still preserves the multiple separated MTrk layout like MIDI 1.0, because this track separation, although not friendly to midi players, is very useful to midi editors. The real major difference is here: 
 
 Note events are no longer identified as separated note on and note off events. Instead, they are combined into one single note on event with a specific duration. 
 And the same as MIDI 3.0, all events use absolute tick timing, but there's no absolute microsecond field in MIDI 4.0. Microsecond is what midi players would care about, not midi editors; editors only care about tick. 
