@@ -1,4 +1,4 @@
-# MIDI Format Version 3.0 Specifications And Implementation Examples
+# MIDI Format Version 3.0 Specifications
 
 I invented a new midi format: MIDI Format Version 3.0! 
 
@@ -21,6 +21,8 @@ MIDI 3.0 uses the exact same MThd header format as MIDI 1.0, only with the forma
 MIDI 3.0 is backward compatible with MIDI 1.0, and a lossless 1.0 to 3.0 and 3.0 to 1.0 conversion is theoretically doable. However, MIDI 3.0 is NOT compatible with MIDI 2.0. 
 
 MIDI 3.0 can only be played by midi players that support this format, you cannot open Format Version 3.0 midi file in a midi player that only knows Format Version1.0. 
+
+# MIDI Format Version 4.0 Specifications
 
 For midi editors, I have another new midi format made specifically for this purpose: MIDI Format Version 4.0! 
 
